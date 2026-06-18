@@ -209,5 +209,47 @@ window.addEventListener('load', function() {
 
 });
 </script>
+    <!-- 隐藏地址电话等不需要的内容 -->
+<script>
+(function removeUnwantedContent() {
+  // 页面加载后执行
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      // 1. 删除地址
+      var addressEls = document.querySelectorAll('*');
+      addressEls.forEach(function(el) {
+        if (el.children.length === 0 && el.textContent.indexOf('北京市朝阳区传统文化街88号') !== -1) {
+          var parent = el.parentElement;
+          if (parent) parent.style.display = 'none';
+        }
+      });
+      
+      // 2. 删除电话
+      addressEls.forEach(function(el) {
+        if (el.children.length === 0 && el.textContent.indexOf('+86 400-888-8888') !== -1) {
+          var parent = el.parentElement;
+          if (parent) parent.style.display = 'none';
+        }
+      });
+      
+      // 3. 删除营业时间
+      addressEls.forEach(function(el) {
+        if (el.children.length === 0 && el.textContent.indexOf('周一至周日') !== -1) {
+          var parent = el.parentElement;
+          if (parent) parent.style.display = 'none';
+        }
+      });
+      
+      // 4. 删除"传承千年命理智慧..."footer文字
+      addressEls.forEach(function(el) {
+        if (el.children.length === 0 && el.textContent.indexOf('传承千年命理智慧') !== -1) {
+          var parent = el.parentElement;
+          if (parent) parent.style.display = 'none';
+        }
+      });
+    }, 1000); // 等待1秒让页面渲染完成
+  });
+})();
+</script>
   </body>
 </html>
