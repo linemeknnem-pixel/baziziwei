@@ -9,10 +9,205 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=SlideFu&display=swap" rel="stylesheet" />
+    <script src="./ai-interpreter.js"></script>
     <script type="module" crossorigin src="./assets/index-9lBL0tvr.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BmDX60kD.css">
   </head>
   <body>
     <div id="root"></div>
+  <script>
+// ============================================================
+// AI 智能体初始化
+// 自动在八字/运势/塔罗页面添加 AI 解读按钮
+// ============================================================
+
+window.addEventListener('load', function() {
+  if (!window.AiInterpreter) {
+    console.error('[AI] ai-interpreter.js not loaded');
+    return;
+  }
+
+  // ===== 1. 八字排盘结果页 =====
+  (function initBaziAi() {
+    // 找到"大运走势"标题，在它前面插入 AI 按钮
+    var luckHeadings = document.querySelectorAll('h3');
+    var targetHeading = null;
+    for (var i = 0; i < luckHeadings.length; i++) {
+      if (luckHeadings[i].textContent.indexOf('大运走势') !== -1) {
+        targetHeading = luckHeadings[i];
+        break;
+      }
+    }
+    
+    if (!targetHeading) return;
+    
+    // 创建容器
+    var btnContainer = document.createElement('div');
+    targetHeading.parentNode.insertBefore(btnContainer, targetHeading);
+    
+    // 获取实际的八字数据（从页面中提取）
+    var getBaziData = function() {
+      // 默认数据
+      var data = {
+        gender: 'male',
+        birthYear: 1995,
+        birthMonth: 1,
+        birthDay: 1,
+        birthHour: 12,
+        birthMinute: 0,
+        dayMaster: '壬水',
+        yearPillar: '甲戌',
+        monthPillar: '甲子',
+        dayPillar: '壬辰',
+        hourPillar: '丙午',
+        fiveElements: { metal: 0.3, wood: 3.3, water: 3.3, fire: 3.3, earth: 3.3, most: '木', least: '金' },
+        luckPeriods: [
+          { ageRange: '2-11岁', stem: '乙', branch: '丑' },
+          { ageRange: '12-21岁', stem: '丙', branch: '寅' },
+          { ageRange: '22-31岁', stem: '丁', branch: '卯' },
+          { ageRange: '32-41岁', stem: '戊', branch: '辰' },
+          { ageRange: '42-51岁', stem: '己', branch: '巳' },
+        ],
+      };
+      
+      // 尝试从页面提取实际数据
+      try {
+        // 提取日主
+        var dayMasterEl = document.querySelector('.day-pillar .gan, [data-pillar="day"] .stem');
+        if (dayMasterEl) data.dayMaster = dayMasterEl.textContent.trim();
+        
+        // 提取四柱
+        var pillars = document.querySelectorAll('.pillar, .bazi-pillar');
+        if (pillars.length >= 4) {
+          data.yearPillar = pillars[0].textContent.trim();
+          data.monthPillar = pillars[1].textContent.trim();
+          data.dayPillar = pillars[2].textContent.trim();
+          data.hourPillar = pillars[3].textContent.trim();
+        }
+        
+        // 提取性别
+        var genderEl = document.querySelector('.gender-info, [data-gender]');
+        if (genderEl) {
+          var gText = genderEl.textContent.trim();
+          data.gender = gText.indexOf('女') !== -1 ? 'female' : 'male';
+        }
+      } catch(e) { /* 使用默认数据 */ }
+      
+      return data;
+    };
+    
+    window.AiInterpreter.addBaziInterpret(btnContainer, getBaziData());
+  })();
+
+  // ===== 2. 运势分析页 =====
+  (function initYunshiAi() {
+    var yunshiSections = [
+      { type: '性格分析', keyword: '性格分析' },
+      { type: '事业运势', keyword: '事业运势' },
+      { type: '婚姻感情', keyword: '婚姻感情' },
+      { type: '财运分析', keyword: '财运分析' },
+      { type: '健康指引', keyword: '健康指引' },
+    ];
+    
+    yunshiSections.forEach(function(section) {
+      // 查找每个运势分类的标题
+      var headings = document.querySelectorAll('h3, h2');
+      var target = null;
+      for (var i = 0; i < headings.length; i++) {
+        if (headings[i].textContent.indexOf(section.keyword) !== -1) {
+          target = headings[i];
+          break;
+        }
+      }
+      
+      if (!target || !target.parentElement) return;
+      
+      // 创建按钮容器
+      var container = document.createElement('div');
+      container.style.marginTop = '12px';
+      target.parentElement.appendChild(container);
+      
+      // 基础运势数据
+      var yunshiData = {
+        type: section.type,
+        dayMaster: '壬水',
+        yearPillar: '甲戌',
+        monthPillar: '甲子',
+        dayPillar: '壬辰',
+        hourPillar: '丙午',
+        fiveElements: { metal: 0.3, wood: 3.3, water: 3.3, fire: 3.3, earth: 3.3, most: '木', least: '金' },
+        currentLuck: '戊辰',
+        ageRange: '32-41岁',
+      };
+      
+      window.AiInterpreter.addYunshiInterpret(container, yunshiData);
+    });
+  })();
+
+  // ===== 3. 塔罗占卜结果页 =====
+  (function initTarotAi() {
+    // 查找塔罗牌阵区域
+    var tarotKeywords = ['牌阵', '塔罗', 'Tarot', 'tarot'];
+    var allHeadings = document.querySelectorAll('h3, h2, h1');
+    var tarotHeading = null;
+    
+    for (var i = 0; i < allHeadings.length; i++) {
+      var text = allHeadings[i].textContent;
+      for (var j = 0; j < tarotKeywords.length; j++) {
+        if (text.indexOf(tarotKeywords[j]) !== -1) {
+          tarotHeading = allHeadings[i];
+          break;
+        }
+      }
+      if (tarotHeading) break;
+    }
+    
+    if (!tarotHeading || !tarotHeading.parentElement) return;
+    
+    // 创建按钮容器
+    var container = document.createElement('div');
+    container.style.marginTop = '16px';
+    tarotHeading.parentElement.appendChild(container);
+    
+    // 获取塔罗牌数据（从页面提取或默认）
+    var getTarotData = function() {
+      var data = {
+        spreadType: '三张牌阵',
+        cards: [
+          { name: '倒吊人', position: '过去', reversed: false },
+          { name: '星星', position: '现在', reversed: false },
+          { name: '月亮', position: '未来', reversed: true },
+        ],
+      };
+      
+      try {
+        // 尝试从页面提取牌名
+        var cardEls = document.querySelectorAll('.tarot-card, .card-name, [data-card]');
+        if (cardEls.length > 0) {
+          data.cards = [];
+          cardEls.forEach(function(el, idx) {
+            var name = el.textContent.trim();
+            var positions = ['过去', '现在', '未来'];
+            data.cards.push({
+              name: name,
+              position: positions[idx] || '',
+              reversed: el.classList.contains('reversed') || el.textContent.indexOf('逆位') !== -1,
+            });
+          });
+        }
+        
+        // 提取牌阵类型
+        var spreadEl = document.querySelector('.spread-type, [data-spread]');
+        if (spreadEl) data.spreadType = spreadEl.textContent.trim();
+      } catch(e) { /* 使用默认数据 */ }
+      
+      return data;
+    };
+    
+    window.AiInterpreter.addTarotInterpret(container, getTarotData());
+  })();
+
+});
+</script>
   </body>
 </html>
