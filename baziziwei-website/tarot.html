@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>塔罗占卜 - 紫微星河</title>
+  <meta name="description" content="AI智能塔罗占卜，揭示命运指引" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=SlideFu&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" crossorigin href="./assets/index-BmDX60kD.css" />
+  <script src="./ai-interpreter.js"></script>
+  <style>
+    :root {
+      --bg-base: #000000;
+      --surface: rgba(255,255,255,0.03);
+      --surface-hover: rgba(255,255,255,0.08);
+      --text-primary: #FFFFFF;
+      --text-secondary: rgba(255,255,255,0.6);
+      --accent-blue: #3B5BF7;
+      --accent-blue-glow: rgba(59,91,247,0.4);
+      --border-line: rgba(255,255,255,0.1);
+      --font-display: "SlideFu", "Noto Serif SC", serif;
+      --font-heading: "Noto Serif SC", serif;
+      --font-body: "Inter", sans-serif;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      letter-spacing: -0.011em;
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-moz-selection { background: rgba(59,91,247,0.3); color: #fff; }
+    ::selection { background: rgba(59,91,247,0.3); color: #fff; }
+
+    /* Navigation */
+    .nav-glass {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-line);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 64px;
+    }
+    .nav-brand {
+      font-family: var(--font-heading);
+      font-size: 20px; font-weight: 600; color: #fff;
+      text-decoration: none; letter-spacing: 0.05em;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-link {
+      color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 400;
+      text-decoration: none; letter-spacing: 0.02em;
+      transition: color 0.3s ease;
+      position: relative; padding: 0.5rem 0;
+    }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+    .nav-link::after {
+      content: ""; position: absolute; bottom:0; left:0; width:0; height:1px;
+      background: var(--accent-blue);
+      transition: width 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 20%, rgba(59,91,247,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .section-label {
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent-blue); margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 10vw, 120px);
+      line-height: 1.1; color: #fff;
+      opacity: 0;
+      animation: heroReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+    }
+    .hero-subtitle {
+      font-family: var(--font-heading);
+      font-size: clamp(16px, 2vw, 24px);
+      color: rgba(255,255,255,0.6);
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: fadeSlideUp 0.8s ease-out 0.8s forwards;
+    }
+    @keyframes heroReveal {
+      0% { opacity:0; transform: translateY(40px) scale(0.95); filter: blur(10px); }
+      100% { opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+    @keyframes fadeSlideUp {
+      0% { opacity:0; transform: translateY(30px); }
+      100% { opacity:1; transform: translateY(0); }
+    }
+
+    /* Spread Selection */
+    .section { max-width: 1200px; margin: 0 auto; padding: 80px 24px; }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400; line-height: 1.2;
+      letter-spacing: 0.02em; color: #fff;
+      text-align: center;
+    }
+    .section-desc {
+      font-size: 16px; line-height: 1.8;
+      color: var(--text-secondary);
+      text-align: center; max-width: 600px;
+      margin: 1rem auto 3rem;
+    }
+
+    /* Spread Cards */
+    .spread-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .spread-card {
+      background: var(--surface);
+      border: 1px solid var(--border-line);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+      cursor: pointer;
+      text-align: center;
+    }
+    .spread-card:hover {
+      background: var(--surface-hover);
+      border-color: rgba(59,91,247,0.3);
+      box-shadow: inset 0 0 0 1px rgba(59,91,247,0.15), 0 8px 32px rgba(59,91,247,0.1);
+      transform: translateY(-4px);
+    }
+    .spread-card.selected {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 30px rgba(59,91,247,0.2);
+    }
+    .spread-icon {
+      font-size: 48px; margin-bottom: 1rem;
+      display: block;
+    }
+    .spread-name {
+      font-family: var(--font-heading);
+      font-size: 20px; color: #fff; margin-bottom: 0.5rem;
+    }
+    .spread-desc {
+      font-size: 14px; color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Question Input */
+    .question-section {
+      max-width: 600px; margin: 0 auto 60px;
+      text-align: center;
+    }
+    .glass-input {
+      width: 100%; padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border-line);
+      background: var(--surface);
+      color: #fff; font-family: var(--font-body);
+      font-size: 15px; transition: all 0.3s ease;
+      outline: none;
+    }
+    .glass-input::placeholder { color: rgba(255,255,255,0.3); }
+    .glass-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59,91,247,0.15);
+      background: var(--surface-hover);
+    }
+
+    /* Draw Button */
+    .draw-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 18px 48px;
+      border-radius: 60px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, rgba(59,91,247,0.2), rgba(255,255,255,0.05), rgba(59,91,247,0.15));
+      background-size: 200% 200%;
+      animation: liquidFlow 4s ease infinite;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      color: #fff; font-family: var(--font-body);
+      font-size: 16px; font-weight: 500;
+      letter-spacing: 0.02em; cursor: pointer;
+      overflow: hidden; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 4px 30px rgba(59,91,247,0.15);
+      margin: 0 auto; display: block;
+    }
+    .draw-btn:hover {
+      border-color: rgba(59,91,247,0.5);
+      box-shadow: inset 0 0 0 1px rgba(59,91,247,0.3), 0 8px 40px rgba(59,91,247,0.3);
+      transform: translateY(-2px);
+    }
+    .draw-btn:active { transform: translateY(0) scale(0.98); }
+    .draw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    @keyframes liquidFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Tarot Cards Display */
+    .cards-display {
+      display: flex; justify-content: center;
+      gap: 30px; flex-wrap: wrap;
+      margin: 40px 0; min-height: 320px;
+      align-items: flex-start;
+    }
+    .tarot-card {
+      width: 180px; height: 300px;
+      border-radius: 16px;
+      position: relative;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .tarot-card-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+      transform-style: preserve-3d;
+    }
+    .tarot-card.flipped .tarot-card-inner {
+      transform: rotateY(180deg);
+    }
+    .tarot-card-front, .tarot-card-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .tarot-card-front {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border: 1px solid rgba(59,91,247,0.3);
+      box-shadow: 0 0 30px rgba(59,91,247,0.1);
+    }
+    .tarot-card-front::before {
+      content: "";
+      position: absolute; inset: 8px;
+      border: 1px solid rgba(59,91,247,0.2);
+      border-radius: 12px;
+    }
+    .card-back-pattern {
+      font-size: 60px; opacity: 0.3;
+      background: linear-gradient(135deg, rgba(59,91,247,0.3), rgba(139,92,246,0.2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tarot-card-back {
+      background: var(--surface);
+      border: 1px solid rgba(59,91,247,0.2);
+      transform: rotateY(180deg);
+      padding: 20px;
+      text-align: center;
+    }
+    .card-emoji { font-size: 48px; margin-bottom: 8px; }
+    .card-name { font-family: var(--font-heading); font-size: 16px; color: #fff; margin-bottom: 4px; }
+    .card-position { font-size: 12px; color: var(--accent-blue); margin-bottom: 4px; }
+    .card-orientation { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .card-orientation.reversed { color: #ef4444; }
+
+    /* Card appear animation */
+    .tarot-card {
+      opacity: 0;
+      transform: translateY(60px);
+      animation: cardAppear 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .tarot-card:nth-child(1) { animation-delay: 0s; }
+    .tarot-card:nth-child(2) { animation-delay: 0.2s; }
+    .tarot-card:nth-child(3) { animation-delay: 0.4s; }
+    .tarot-card:nth-child(4) { animation-delay: 0.6s; }
+    .tarot-card:nth-child(5) { animation-delay: 0.8s; }
+    @keyframes cardAppear {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card hover */
+    .tarot-card:hover { transform: translateY(-8px); }
+
+    /* AI Button container */
+    .ai-btn-wrap {
+      display: flex; justify-content: center;
+      margin: 30px 0;
+    }
+
+    /* Hide on mobile */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .tarot-card { width: 140px; height: 240px; }
+      .cards-display { gap: 16px; }
+      .spread-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-glass">
+    <div class="nav-inner">
+      <a href="./index.html" class="nav-brand">紫微星河</a>
+      <div class="nav-links">
+        <a href="./index.html" class="nav-link">首页</a>
+        <a href="./index.html#about" class="nav-link">关于我们</a>
+        <a href="./index.html#services" class="nav-link">服务项目</a>
+        <a href="./index.html#knowledge" class="nav-link">命理基础</a>
+        <a href="./index.html#contact" class="nav-link">联系我们</a>
+        <a href="./tarot.html" class="nav-link active">塔罗占卜</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="section-label">Tarot Divination</div>
+    <h1 class="hero-title">塔罗占卜</h1>
+    <p class="hero-subtitle">选择牌阵，专注你的问题，让塔罗揭示命运的指引</p>
+  </section>
+
+  <!-- Spread Selection -->
+  <section class="section" id="spread-section">
+    <div class="section-label" style="text-align:center">Choose Spread</div>
+    <h2 class="section-title">选择牌阵</h2>
+    <p class="section-desc">不同的牌阵适用于不同的问题类型，选择最适合你的牌阵</p>
+
+    <div class="spread-grid">
+      <div class="spread-card selected" data-spread="single" data-cards="1" onclick="selectSpread(this)">
+        <span class="spread-icon">🃏</span>
+        <h3 class="spread-name">单张牌占卜</h3>
+        <p class="spread-desc">简洁直接的指引，适合快速得到一个明确的答案或建议</p>
+      </div>
+      <div class="spread-card" data-spread="three" data-cards="3" onclick="selectSpread(this)">
+        <span class="spread-icon">🃏🃏🃏</span>
+        <h3 class="spread-name">三张牌阵</h3>
+        <p class="spread-desc">过去、现在、未来的时间线解读，适合了解事情的发展趋势</p>
+      </div>
+      <div class="spread-card" data-spread="cross" data-cards="5" onclick="selectSpread(this)">
+        <span class="spread-icon">✝️</span>
+        <h3 class="spread-name">凯尔特十字</h3>
+        <p class="spread-desc">最经典的塔罗牌阵，全面深入地分析问题的各个层面</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Question Input -->
+  <section class="question-section">
+    <div class="section-label" style="margin-bottom:1rem">Your Question</div>
+    <h2 class="section-title" style="font-size:28px; margin-bottom:1rem">心中默念你的问题</h2>
+    <input type="text" class="glass-input" id="question-input"
+      placeholder="例如：我近期的事业发展如何？（可选）" />
+  </section>
+
+  <!-- Draw Button -->
+  <div style="text-align:center; margin-bottom:60px;">
+    <button class="draw-btn" id="draw-btn" onclick="drawCards()">
+      <span>🔮</span> 开始抽牌
+    </button>
+  </div>
+
+  <!-- Cards Display Area -->
+  <div class="section" id="cards-area" style="display:none;">
+    <div class="section-label" style="text-align:center">Your Cards</div>
+    <h2 class="section-title" id="result-title" style="font-size:32px; margin-bottom:0.5rem">你的牌阵</h2>
+    <p class="section-desc" id="result-desc">点击卡牌翻开，查看AI解读</p>
+    
+    <div class="cards-display" id="cards-container"></div>
+    
+    <div class="ai-btn-wrap" id="ai-btn-container"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="border-top:1px solid var(--border-line); padding:40px 24px; text-align:center; margin-top:80px;">
+    <p style="font-size:13px; color:var(--text-secondary);">
+      AI 解读仅供参考娱乐，不构成专业命理咨询建议
+    </p>
+    <p style="font-size:11px; color:rgba(255,255,255,0.25); margin-top:8px;">
+      紫微星河 &copy; 2025
+    </p>
+  </footer>
+
+  <script>
+  // ===== 塔罗牌数据 =====
+  var TAROT_CARDS = [
+    { name: '愚人', emoji: '🤡', meaning: '新的开始，冒险，信任直觉' },
+    { name: '魔术师', emoji: '🎩', meaning: '创造力，意志力，行动力' },
+    { name: '女祭司', emoji: '👸', meaning: '直觉，内在智慧，潜意识' },
+    { name: '皇后', emoji: '👑', meaning: '丰饶，母性，创造力' },
+    { name: '皇帝', emoji: '🏛️', meaning: '权威，秩序，掌控' },
+    { name: '教皇', emoji: '⛪', meaning: '传统，教导，精神指引' },
+    { name: '恋人', emoji: '💕', meaning: '爱情，选择，和谐' },
+    { name: '战车', emoji: '🏎️', meaning: '胜利，决心，掌控' },
+    { name: '力量', emoji: '🦁', meaning: '内在力量，勇气，耐心' },
+    { name: '隐士', emoji: '🕯️', meaning: '内省，独处，寻找真理' },
+    { name: '命运之轮', emoji: '☸️', meaning: '变化，命运，转折点' },
+    { name: '正义', emoji: '⚖️', meaning: '公正，平衡，因果' },
+    { name: '倒吊人', emoji: '🙃', meaning: '牺牲，等待，换个角度看' },
+    { name: '死神', emoji: '💀', meaning: '结束，转变，新生' },
+    { name: '节制', emoji: '🍷', meaning: '平衡，耐心，调和' },
+    { name: '恶魔', emoji: '😈', meaning: '束缚，欲望，物质主义' },
+    { name: '塔', emoji: '🗼', meaning: '突变，觉醒，打破旧有' },
+    { name: '星星', emoji: '⭐', meaning: '希望，灵感，宁静' },
+    { name: '月亮', emoji: '🌙', meaning: '幻象，潜意识，不确定性' },
+    { name: '太阳', emoji: '☀️', meaning: '成功，喜悦，活力' },
+    { name: '审判', emoji: '📯', meaning: '觉醒，重生，评估' },
+    { name: '世界', emoji: '🌍', meaning: '完成，圆满，成就' },
+  ];
+
+  var SPREAD_POSITIONS = {
+    single: ['指引'],
+    three: ['过去', '现在', '未来'],
+    cross: ['现状', '挑战', '过去', '未来', '建议'],
+  };
+
+  var selectedSpread = 'single';
+  var drawnCards = [];
+
+  // ===== 选择牌阵 =====
+  function selectSpread(el) {
+    document.querySelectorAll('.spread-card').forEach(function(c) {
+      c.classList.remove('selected');
+    });
+    el.classList.add('selected');
+    selectedSpread = el.dataset.spread;
+  }
+
+  // ===== 抽牌 =====
+  function drawCards() {
+    var btn = document.getElementById('draw-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>✨</span> 洗牌中...';
+
+    // 模拟洗牌动画
+    setTimeout(function() {
+      var numCards = parseInt(document.querySelector('.spread-card.selected').dataset.cards);
+      var positions = SPREAD_POSITIONS[selectedSpread];
+      drawnCards = [];
+
+      // 随机抽牌（不重复）
+      var available = TAROT_CARDS.slice();
+      for (var i = 0; i < numCards; i++) {
+        var idx = Math.floor(Math.random() * available.length);
+        var card = available.splice(idx, 1)[0];
+        drawnCards.push({
+          name: card.name,
+          emoji: card.emoji,
+          position: positions[i] || '',
+          reversed: Math.random() < 0.3, // 30%概率逆位
+        });
+      }
+
+      // 显示牌
+      displayCards();
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔮</span> 重新抽牌';
+    }, 1500);
+  }
+
+  // ===== 显示牌 =====
+  function displayCards() {
+    var container = document.getElementById('cards-container');
+    var area = document.getElementById('cards-area');
+    var spreadName = document.querySelector('.spread-card.selected .spread-name').textContent;
+    document.getElementById('result-title').textContent = spreadName + ' 结果';
+    document.getElementById('result-desc').textContent = '点击卡牌翻开查看详情';
+    area.style.display = 'block';
+
+    container.innerHTML = '';
+
+    drawnCards.forEach(function(card, index) {
+      var cardEl = document.createElement('div');
+      cardEl.className = 'tarot-card';
+      cardEl.style.animationDelay = (index * 0.2) + 's';
+      cardEl.innerHTML =
+        '<div class="tarot-card-inner">' +
+          '<div class="tarot-card-front">' +
+            '<span class="card-back-pattern">✦</span>' +
+          '</div>' +
+          '<div class="tarot-card-back">' +
+            '<span class="card-emoji">' + card.emoji + '</span>' +
+            '<h3 class="card-name">' + card.name + '</h3>' +
+            '<p class="card-position">' + card.position + '</p>' +
+            '<p class="card-orientation ' + (card.reversed ? 'reversed' : '') + '">' +
+              (card.reversed ? '逆位' : '正位') +
+            '</p>' +
+          '</div>' +
+        '</div>';
+
+      cardEl.onclick = function() {
+        cardEl.classList.toggle('flipped');
+        checkAllFlipped();
+      };
+
+      container.appendChild(cardEl);
+    });
+
+    // 清除之前的 AI 按钮
+    document.getElementById('ai-btn-container').innerHTML = '';
+
+    // 滚动到结果区域
+    setTimeout(function() {
+      area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  // ===== 检查是否全部翻开 =====
+  function checkAllFlipped() {
+    var allFlipped = document.querySelectorAll('.tarot-card').length > 0 &&
+      document.querySelectorAll('.tarot-card:not(.flipped)').length === 0;
+
+    if (allFlipped && window.AiInterpreter) {
+      showAiButton();
+    }
+  }
+
+  // ===== 显示 AI 解读按钮 =====
+  function showAiButton() {
+    var container = document.getElementById('ai-btn-container');
+    if (container.children.length > 0) return; // 已存在
+
+    var question = document.getElementById('question-input').value || '';
+    var spreadName = document.querySelector('.spread-card.selected .spread-name').textContent;
+
+    window.AiInterpreter.addTarotInterpret(container, {
+      spreadType: spreadName,
+      cards: drawnCards.map(function(c) {
+        return { name: c.name, position: c.position, reversed: c.reversed };
+      }),
+      question: question,
+    });
+  }
+  </script>
+
+</body>
+</html>
