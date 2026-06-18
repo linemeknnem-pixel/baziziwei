@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>紫微星河 - AI智能命理</title>
+  <title>AAA专业易神算 - AI智能命理</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -45,9 +45,10 @@
       padding: 0 24px; height: 60px;
     }
     .nav-brand { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--text); text-decoration: none; }
-    .nav-links { display: flex; gap: 28px; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
     .nav-link { color: var(--text-secondary); font-size: 14px; text-decoration: none; transition: color 0.3s; cursor: pointer; background:none; border:none; font-family: inherit; }
     .nav-link:hover { color: var(--accent); }
+    .nav-user { font-size: 13px; color: var(--accent); }
 
     /* ===== 页面区域 ===== */
     .section {
@@ -72,13 +73,14 @@
     }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-    .form-input, .form-select {
+    .form-input, .form-select, .form-textarea {
       padding: 12px 16px; border-radius: 12px;
       border: 1px solid var(--border); background: var(--bg-card);
       color: var(--text); font-size: 15px; font-family: inherit;
       outline: none; transition: all 0.3s;
     }
-    .form-input:focus, .form-select:focus {
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
@@ -102,6 +104,7 @@
       box-shadow: none;
     }
     .btn-outline:hover { background: var(--accent-light); }
+    .btn-sm { padding: 8px 20px; font-size: 13px; }
 
     /* ===== 卡片 ===== */
     .card {
@@ -177,11 +180,43 @@
     .t-rev { font-size: 10px; color: var(--text-secondary); }
     .t-rev.reversed { color: #e74c3c; }
 
-    /* ===== 紫微简化 ===== */
-    .ziwei-placeholder {
-      text-align: center; padding: 40px;
-      color: var(--text-secondary);
+    /* ===== 登录/注册弹窗 ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
     }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+    .modal-box {
+      background: var(--bg-card); border-radius: 20px;
+      padding: 32px; width: 100%; max-width: 420px;
+      margin: 0 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .modal-title {
+      font-family: var(--font-display); font-size: 22px;
+      font-weight: 600; text-align: center; margin-bottom: 4px;
+    }
+    .modal-subtitle { text-align: center; color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: var(--accent-light);
+      color: var(--accent); font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ===== 历史记录 ===== */
+    .history-list { max-height: 400px; overflow: auto; }
+    .history-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border-radius: 10px;
+      border: 1px solid var(--border); margin-bottom: 8px;
+      background: var(--bg-card); transition: all 0.2s;
+    }
+    .history-item:hover { border-color: var(--accent); }
+    .history-type { font-size: 12px; color: var(--accent); font-weight: 500; }
+    .history-date { font-size: 11px; color: #999; }
+    .history-empty { text-align: center; color: #999; padding: 40px 0; font-size: 14px; }
 
     /* ===== 页脚 ===== */
     .footer {
@@ -189,6 +224,9 @@
       border-top: 1px solid var(--border);
       margin-top: 60px;
     }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
+    .footer-link { color: var(--accent); font-size: 13px; text-decoration: none; cursor: pointer; }
+    .footer-link:hover { text-decoration: underline; }
     .footer p { font-size: 12px; color: var(--text-secondary); }
 
     @media (max-width: 640px) {
@@ -206,20 +244,25 @@
 <!-- 导航 -->
 <nav class="nav">
   <div class="nav-inner">
-    <a class="nav-brand" href="#hero">紫微星河</a>
+    <a class="nav-brand" href="#hero">AAA专业易神算</a>
     <div class="nav-links">
       <a class="nav-link" href="#bazi">八字测算</a>
       <a class="nav-link" href="#ziwei">紫微</a>
       <a class="nav-link" href="#yunshi">当前运势</a>
       <a class="nav-link" href="#tarot">塔罗占卜</a>
+      <a class="nav-link" onclick="openHistory()">📋 历史记录</a>
+      <a class="nav-link" onclick="openService()">🎧 售后服务</a>
+      <span id="user-area">
+        <a class="nav-link" onclick="openLogin()" id="login-btn">登录</a>
+      </span>
     </div>
   </div>
 </nav>
 
 <!-- Hero -->
 <section id="hero" style="padding-top: 120px; text-align: center; max-width: 700px; margin: 0 auto;">
-  <h1 style="font-family: var(--font-display); font-size: clamp(32px, 6vw, 56px); font-weight: 600; margin-bottom: 12px;">紫微星河</h1>
-  <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 40px;">AI 智能命理解读 · 探索你的命运密码</p>
+  <h1 style="font-family: var(--font-display); font-size: clamp(32px, 6vw, 56px); font-weight: 600; margin-bottom: 12px;">AAA专业易神算</h1>
+  <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 40px;">AI 智能命理解读 · 八字 · 紫微 · 运势 · 塔罗</p>
   <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
     <a href="#bazi" class="btn">开始八字测算</a>
     <a href="#tarot" class="btn btn-outline">塔罗占卜</a>
@@ -237,7 +280,8 @@
         <label class="form-label">性别</label>
         <select class="form-select" id="bazi-gender">
           <option value="male">男</option>
-          <option value="female">女</n        </select>
+          <option value="female">女</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">出生年份</label>
@@ -278,7 +322,6 @@
     </div>
   </div>
 
-  <!-- 八字结果 -->
   <div class="result-area" id="bazi-result">
     <div class="card">
       <h3 style="font-family: var(--font-display); font-size: 20px; text-align: center; margin-bottom: 16px;">四柱八字</h3>
@@ -337,7 +380,6 @@
     </div>
   </div>
 
-  <!-- 紫微结果 -->
   <div class="result-area" id="ziwei-result">
     <div class="card">
       <h3 style="font-family: var(--font-display); font-size: 20px; text-align: center; margin-bottom: 16px;">紫微命盘</h3>
@@ -389,7 +431,6 @@
     </div>
   </div>
 
-  <!-- 运势结果 -->
   <div class="result-area" id="yunshi-result">
     <div class="card">
       <h3 style="font-family: var(--font-display); font-size: 20px; text-align: center; margin-bottom: 16px;">运势分析</h3>
@@ -431,7 +472,6 @@
     </div>
   </div>
 
-  <!-- 塔罗结果 -->
   <div class="result-area" id="tarot-result">
     <div class="card">
       <h3 style="font-family: var(--font-display); font-size: 20px; text-align: center; margin-bottom: 16px;" id="tarot-result-title">抽牌结果</h3>
@@ -443,14 +483,83 @@
 
 <!-- 页脚 -->
 <footer class="footer">
-  <p>紫微星河 · AI 智能命理</p>
+  <div class="footer-links">
+    <a class="footer-link" onclick="openHistory()">📋 历史记录</a>
+    <a class="footer-link" onclick="openService()">🎧 售后服务</a>
+  </div>
+  <p>AAA专业易神算 · AI 智能命理</p>
 </footer>
+
+<!-- ===== 登录/注册弹窗 ===== -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal-box" style="position: relative;">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <h3 class="modal-title">🔐 登录 / 注册</h3>
+    <p class="modal-subtitle">绑定手机号，查看您的测算历史</p>
+    <div class="form-group" style="margin-bottom: 16px;">
+      <label class="form-label">手机号码</label>
+      <input type="tel" class="form-input" id="login-phone" placeholder="请输入11位手机号" maxlength="11" />
+    </div>
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label class="form-label">验证码</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" class="form-input" id="login-code" placeholder="1234" maxlength="4" style="flex: 1;" />
+        <button class="btn btn-sm" onclick="sendCode()" id="code-btn">获取验证码</button>
+      </div>
+    </div>
+    <button class="btn" style="width: 100%;" onclick="doLogin()">登录 / 注册</button>
+    <p style="text-align: center; font-size: 12px; color: #999; margin-top: 12px;">首次登录将自动创建账号</p>
+  </div>
+</div>
+
+<!-- ===== 历史记录弹窗 ===== -->
+<div class="modal-overlay" id="history-modal">
+  <div class="modal-box" style="position: relative; max-width: 520px;">
+    <button class="modal-close" onclick="closeModal('history-modal')">✕</button>
+    <h3 class="modal-title">📋 测算历史</h3>
+    <p class="modal-subtitle" id="history-user">登录后查看您的历史记录</p>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+<!-- ===== 售后服务弹窗 ===== -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal-box" style="position: relative;">
+    <button class="modal-close" onclick="closeModal('service-modal')">✕</button>
+    <h3 class="modal-title">🎧 售后服务</h3>
+    <p class="modal-subtitle">有任何问题或建议，请联系我们</p>
+
+    <div style="background: var(--accent-light); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">📧 客服邮箱</p>
+      <p style="font-size: 15px; font-weight: 500; color: var(--accent);">linemeknnem@gmail.com</p>
+    </div>
+
+    <form onsubmit="submitService(event)">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">您的称呼</label>
+        <input type="text" class="form-input" id="service-name" placeholder="怎么称呼您" required />
+      </div>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label class="form-label">联系邮箱</label>
+        <input type="email" class="form-input" id="service-email" placeholder="您的邮箱地址" required />
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label">问题描述</label>
+        <textarea class="form-textarea" id="service-content" placeholder="请详细描述您遇到的问题或建议..." required></textarea>
+      </div>
+      <button type="submit" class="btn" style="width: 100%;">提交反馈</button>
+    </form>
+
+    <p style="text-align: center; font-size: 12px; color: #999; margin-top: 12px;">反馈将发送至 linemeknnem@gmail.com</p>
+  </div>
+</div>
 
 <script>
 // ============================================================
-// AI 智能体核心
+// AAA专业易神算 - 核心逻辑
 // ============================================================
 const API_BASE = 'https://baziziwei-ai.linemeknnem.workers.dev';
+const SERVICE_EMAIL = 'linemeknnem@gmail.com';
 
 const TAROT_DECK = [
   { name: '愚人', emoji: '🤡' }, { name: '魔术师', emoji: '🎩' },
@@ -465,48 +574,168 @@ const TAROT_DECK = [
   { name: '月亮', emoji: '🌙' }, { name: '太阳', emoji: '☀️' },
   { name: '审判', emoji: '📯' }, { name: '世界', emoji: '🌍' },
 ];
-
 const SPREAD_POS = { single: ['指引'], three: ['过去', '现在', '未来'], cross: ['现状', '挑战', '过去', '未来', '建议'] };
-
-let selectedSpread = 'single';
-let drawnCards = [];
-
-// ===== 八字天干地支 =====
 const TIAN_GAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
 const DI_ZHI = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 const ZIWEI_STARS = ['紫微', '天机', '太阳', '武曲', '天同', '廉贞', '天府', '太阴', '贪狼', '巨门', '天相', '天梁', '七杀', '破军'];
 const PALACE_NAMES = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '交友', '事业', '田宅', '福德', '父母'];
 
-function getYearPillar(year) {
-  var gan = TIAN_GAN[(year - 4) % 10];
-  var zhi = DI_ZHI[(year - 4) % 12];
-  return gan + zhi;
+let selectedSpread = 'single';
+let drawnCards = [];
+let currentUser = null;
+
+// ===== 用户系统 =====
+function initUser() {
+  var saved = localStorage.getItem('aaa_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    updateUserUI();
+  }
 }
 
-function getMonthPillar(year, month) {
-  var yearGanIdx = (year - 4) % 10;
-  var startGan = [2, 14, 26, 38, 50, 62, 74, 86, 98, 110][yearGanIdx % 5] % 10;
-  var gan = TIAN_GAN[(startGan + month - 1) % 10];
-  var zhi = DI_ZHI[(month + 1) % 12];
-  return gan + zhi;
+function updateUserUI() {
+  var area = document.getElementById('user-area');
+  if (currentUser) {
+    area.innerHTML = '<span class="nav-user">👤 ' + currentUser.phone + '</span> <a class="nav-link" onclick="logout()">退出</a>';
+  } else {
+    area.innerHTML = '<a class="nav-link" onclick="openLogin()" id="login-btn">登录</a>';
+  }
 }
 
-function getDayPillar(year, month, day) {
-  // 简化计算
-  var base = new Date(1900, 0, 31);
-  var target = new Date(year, month - 1, day);
-  var diff = Math.floor((target - base) / 86400000);
-  return TIAN_GAN[diff % 10] + DI_ZHI[diff % 12];
+function openLogin() {
+  document.getElementById('login-modal').classList.add('active');
 }
 
-function getHourPillar(dayPillar, hour) {
-  var dayGan = TIAN_GAN.indexOf(dayPillar[0]);
-  var start = [0, 2, 4, 6, 8, 0, 2, 4, 6, 8][dayGan];
-  var zhiIdx = Math.floor(hour / 2) % 12;
-  return TIAN_GAN[(start + zhiIdx) % 10] + DI_ZHI[zhiIdx];
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
 }
 
-// ===== 八字测算 =====
+function sendCode() {
+  var phone = document.getElementById('login-phone').value;
+  if (!phone || phone.length !== 11) {
+    alert('请输入11位手机号码');
+    return;
+  }
+  var btn = document.getElementById('code-btn');
+  btn.disabled = true;
+  var count = 60;
+  btn.textContent = count + 's';
+  var timer = setInterval(function() {
+    count--;
+    btn.textContent = count + 's';
+    if (count <= 0) {
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.textContent = '获取验证码';
+    }
+  }, 1000);
+  alert('验证码已发送：1234（演示模式）');
+}
+
+function doLogin() {
+  var phone = document.getElementById('login-phone').value;
+  var code = document.getElementById('login-code').value;
+  if (!phone || phone.length !== 11) { alert('请输入11位手机号'); return; }
+  if (!code) { alert('请输入验证码'); return; }
+  // 演示模式：任何验证码都通过
+  currentUser = { phone: phone, loginTime: new Date().toISOString() };
+  localStorage.setItem('aaa_user', JSON.stringify(currentUser));
+  updateUserUI();
+  closeModal('login-modal');
+  alert('登录成功！');
+}
+
+function logout() {
+  if (confirm('确定要退出登录吗？')) {
+    currentUser = null;
+    localStorage.removeItem('aaa_user');
+    updateUserUI();
+  }
+}
+
+// ===== 历史记录 =====
+function saveHistory(type, title, content) {
+  if (!currentUser) return;
+  var history = JSON.parse(localStorage.getItem('aaa_history_' + currentUser.phone) || '[]');
+  history.unshift({
+    type: type,
+    title: title,
+    content: content,
+    date: new Date().toLocaleString('zh-CN'),
+  });
+  // 只保留最近50条
+  if (history.length > 50) history = history.slice(0, 50);
+  localStorage.setItem('aaa_history_' + currentUser.phone, JSON.stringify(history));
+}
+
+function openHistory() {
+  if (!currentUser) {
+    alert('请先登录后查看历史记录');
+    openLogin();
+    return;
+  }
+  document.getElementById('history-user').textContent = '👤 ' + currentUser.phone + ' 的测算记录';
+  var history = JSON.parse(localStorage.getItem('aaa_history_' + currentUser.phone) || '[]');
+  var list = document.getElementById('history-list');
+
+  if (history.length === 0) {
+    list.innerHTML = '<div class="history-empty">暂无测算记录<br>完成一次测算后，结果将自动保存到这里</div>';
+  } else {
+    list.innerHTML = history.map(function(h) {
+      return '<div class="history-item">' +
+        '<div><span class="history-type">' + h.type + '</span><br><small style="color:#666;">' + h.title + '</small></div>' +
+        '<span class="history-date">' + h.date + '</span></div>';
+    }).join('');
+  }
+  document.getElementById('history-modal').classList.add('active');
+}
+
+// ===== 售后服务 =====
+function openService() {
+  document.getElementById('service-modal').classList.add('active');
+}
+
+function submitService(e) {
+  e.preventDefault();
+  var name = document.getElementById('service-name').value;
+  var email = document.getElementById('service-email').value;
+  var content = document.getElementById('service-content').value;
+
+  // 通过 Formspree 发送邮件（免费的表单提交服务）
+  fetch('https://formspree.io/f/xnqevwyn', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      message: content,
+      _subject: 'AAA专业易神算 - 售后服务反馈',
+    }),
+  }).then(function() {
+    alert('反馈已提交！我们会尽快回复您。');
+    closeModal('service-modal');
+    document.getElementById('service-name').value = '';
+    document.getElementById('service-email').value = '';
+    document.getElementById('service-content').value = '';
+  }).catch(function() {
+    // 如果 Formspree 失败，使用 mailto 作为备用
+    var mailtoLink = 'mailto:' + SERVICE_EMAIL +
+      '?subject=AAA专业易神算 - 售后服务反馈' +
+      '&body=称呼：' + encodeURIComponent(name) +
+      '%0A邮箱：' + encodeURIComponent(email) +
+      '%0A%0A问题描述：%0A' + encodeURIComponent(content);
+    window.location.href = mailtoLink;
+    alert('已打开邮件客户端，请发送您的反馈。');
+    closeModal('service-modal');
+  });
+}
+
+// ===== 八字 =====
+function getYearPillar(year) { return TIAN_GAN[(year - 4) % 10] + DI_ZHI[(year - 4) % 12]; }
+function getMonthPillar(year, month) { return TIAN_GAN[(year * 2 + month) % 10] + DI_ZHI[(month + 1) % 12]; }
+function getDayPillar(year, month, day) { return TIAN_GAN[(year + month + day) % 10] + DI_ZHI[(year + month + day) % 12]; }
+function getHourPillar(dayPillar, hour) { return TIAN_GAN[hour % 10] + DI_ZHI[Math.floor(hour / 2) % 12]; }
+
 function calculateBazi() {
   var year = parseInt(document.getElementById('bazi-year').value);
   var month = parseInt(document.getElementById('bazi-month').value);
@@ -531,8 +760,7 @@ function calculateBazi() {
     html += '<div class="pillar-card">' +
       '<div class="pillar-label">' + p.label + '</div>' +
       '<div class="pillar-value">' + p.value + '</div>' +
-      '<div class="pillar-hidden">' + p.hidden + '</div>' +
-      '</div>';
+      '<div class="pillar-hidden">' + p.hidden + '</div></div>';
   });
   document.getElementById('bazi-pillars').innerHTML = html;
 
@@ -540,24 +768,23 @@ function calculateBazi() {
   resultArea.classList.add('active');
   resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
+  // 保存历史
+  saveHistory('八字测算', '八字排盘 ' + yPillar + '年 ' + mPillar + '月', '');
+
   // AI 按钮
   var wrap = document.getElementById('bazi-ai-wrap');
   wrap.innerHTML = '';
-  createAiButton(wrap, 'AI 智能解读八字', function() {
+  createAiBtn(wrap, 'AI 智能解读八字', function() {
     callAi('bazi', 'AI 八字命盘解读', {
       gender: gender, birthYear: year, birthMonth: month, birthDay: day, birthHour: hour, birthMinute: 0,
       dayMaster: dPillar[0] + '干',
       yearPillar: yPillar, monthPillar: mPillar, dayPillar: dPillar, hourPillar: hPillar,
       fiveElements: { metal: 1, wood: 2, water: 3, fire: 2, earth: 2, most: '水', least: '金' },
-      luckPeriods: [
-        { ageRange: '1-10岁', stem: TIAN_GAN[(year+1)%10], branch: DI_ZHI[(year+1)%12] },
-        { ageRange: '11-20岁', stem: TIAN_GAN[(year+2)%10], branch: DI_ZHI[(year+2)%12] },
-      ],
     });
   });
 }
 
-// ===== 紫微排盘 =====
+// ===== 紫微 =====
 function calculateZiwei() {
   var year = parseInt(document.getElementById('ziwei-year').value);
   var month = parseInt(document.getElementById('ziwei-month').value);
@@ -565,20 +792,17 @@ function calculateZiwei() {
   var hour = parseInt(document.getElementById('ziwei-hour').value);
   var gender = document.getElementById('ziwei-gender').value;
 
-  // 简化紫微排盘 - 随机分配星曜到十二宫
   var shuffled = ZIWEI_STARS.slice().sort(function() { return Math.random() - 0.5; });
   var palaces = [];
   for (var i = 0; i < 12; i++) {
-    var star = shuffled[i % shuffled.length];
-    palaces.push({ name: PALACE_NAMES[i], star: star });
+    palaces.push({ name: PALACE_NAMES[i], star: shuffled[i % shuffled.length] });
   }
 
   var html = '';
   palaces.forEach(function(p) {
     html += '<div style="background: var(--accent-light); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center;">' +
       '<div style="font-size: 11px; color: var(--text-secondary);">' + p.name + '</div>' +
-      '<div style="font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--accent); margin-top: 4px;">' + p.star + '</div>' +
-      '</div>';
+      '<div style="font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--accent); margin-top: 4px;">' + p.star + '</div></div>';
   });
   document.getElementById('ziwei-palaces').innerHTML = html;
 
@@ -586,28 +810,27 @@ function calculateZiwei() {
   resultArea.classList.add('active');
   resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  // AI 按钮
+  saveHistory('紫微斗数', '紫微排盘 ' + year + '年' + month + '月' + day + '日', '');
+
   var wrap = document.getElementById('ziwei-ai-wrap');
   wrap.innerHTML = '';
-  createAiButton(wrap, 'AI 解读紫微命盘', function() {
+  createAiBtn(wrap, 'AI 解读紫微命盘', function() {
     callAi('bazi', 'AI 紫微斗数解读', {
       gender: gender, birthYear: year, birthMonth: month, birthDay: day, birthHour: hour, birthMinute: 0,
       dayMaster: TIAN_GAN[year % 10] + '干',
       yearPillar: getYearPillar(year), monthPillar: getMonthPillar(year, month),
       dayPillar: getDayPillar(year, month, day), hourPillar: getHourPillar(getDayPillar(year, month, day), hour),
-      fiveElements: { metal: 1, wood: 2, water: 3, fire: 2, earth: 2, most: '水', least: '金' },
     });
   });
 }
 
-// ===== 运势分析 =====
+// ===== 运势 =====
 function calculateYunshi() {
   var year = parseInt(document.getElementById('yunshi-year').value);
   var month = parseInt(document.getElementById('yunshi-month').value);
   var day = parseInt(document.getElementById('yunshi-day').value);
   var gender = document.getElementById('yunshi-gender').value;
   var type = document.getElementById('yunshi-type').value;
-
   var currentYear = new Date().getFullYear();
   var age = currentYear - year;
 
@@ -622,8 +845,7 @@ function calculateYunshi() {
   details.forEach(function(d) {
     html += '<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">' +
       '<span style="color: var(--text-secondary); font-size: 14px;">' + d.label + '</span>' +
-      '<span style="font-weight: 500;">' + d.value + '</span>' +
-      '</div>';
+      '<span style="font-weight: 500;">' + d.value + '</span></div>';
   });
   document.getElementById('yunshi-details').innerHTML = html;
 
@@ -631,19 +853,18 @@ function calculateYunshi() {
   resultArea.classList.add('active');
   resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  // AI 按钮
+  saveHistory('运势分析', type + ' ' + year + '年' + month + '月' + day + '日', '');
+
   var wrap = document.getElementById('yunshi-ai-wrap');
   wrap.innerHTML = '';
-  createAiButton(wrap, 'AI 解读' + type, function() {
+  createAiBtn(wrap, 'AI 解读' + type, function() {
     callAi('yunshi', 'AI ' + type + '解读', {
-      type: type,
-      dayMaster: TIAN_GAN[year % 10] + '干',
+      type: type, dayMaster: TIAN_GAN[year % 10] + '干',
       yearPillar: getYearPillar(year), monthPillar: getMonthPillar(year, month),
       dayPillar: getDayPillar(year, month, day), hourPillar: '未知',
-      fiveElements: { metal: 1, wood: 2, water: 3, fire: 2, earth: 2, most: '水', least: '金' },
+      fiveElements: { metal: 1, wood: 2, water: 3, fire: 2, earth: 2 },
       currentLuck: TIAN_GAN[(year + Math.floor(age / 10)) % 10] + DI_ZHI[(year + Math.floor(age / 10)) % 12],
       ageRange: Math.floor(age / 10) * 10 + '-' + (Math.floor(age / 10) * 10 + 9) + '岁',
-      detail: type + '分析，年龄' + age + '岁',
     });
   });
 }
@@ -664,17 +885,12 @@ function drawTarot() {
     var numCards = parseInt(document.querySelector('.spread-option.selected').dataset.cards);
     var positions = SPREAD_POS[selectedSpread];
     drawnCards = [];
-
     var available = TAROT_DECK.slice();
     for (var i = 0; i < numCards; i++) {
       var idx = Math.floor(Math.random() * available.length);
       var card = available.splice(idx, 1)[0];
-      drawnCards.push({
-        name: card.name, emoji: card.emoji,
-        position: positions[i] || '', reversed: Math.random() < 0.3,
-      });
+      drawnCards.push({ name: card.name, emoji: card.emoji, position: positions[i] || '', reversed: Math.random() < 0.3 });
     }
-
     showTarotCards();
     btn.disabled = false;
     btn.textContent = '🔮 重新抽牌';
@@ -700,15 +916,12 @@ function showTarotCards() {
           '<div class="t-name">' + card.name + '</div>' +
           '<div class="t-pos">' + card.position + '</div>' +
           '<div class="t-rev ' + (card.reversed ? 'reversed' : '') + '">' + (card.reversed ? '逆位' : '正位') + '</div>' +
-        '</div>' +
-      '</div>';
-
-    cardEl.onclick = function() {
-      cardEl.classList.toggle('flipped');
-      checkAllFlipped();
-    };
+        '</div></div>';
+    cardEl.onclick = function() { cardEl.classList.toggle('flipped'); checkAllFlipped(); };
     container.appendChild(cardEl);
   });
+
+  saveHistory('塔罗占卜', selectedSpread === 'single' ? '单张牌' : selectedSpread === 'three' ? '三张牌阵' : '凯尔特十字', '');
 
   document.getElementById('tarot-ai-wrap').innerHTML = '';
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -717,13 +930,12 @@ function showTarotCards() {
 function checkAllFlipped() {
   var allFlipped = document.querySelectorAll('.t-card').length > 0 &&
     document.querySelectorAll('.t-card:not(.flipped)').length === 0;
-
   if (allFlipped) {
     var wrap = document.getElementById('tarot-ai-wrap');
     if (wrap.children.length > 0) return;
     var question = document.getElementById('tarot-question').value || '';
     var spreadName = document.querySelector('.spread-option.selected .spread-name').textContent;
-    createAiButton(wrap, 'AI 智能解读塔罗', function() {
+    createAiBtn(wrap, 'AI 智能解读塔罗', function() {
       callAi('tarot', 'AI ' + spreadName + '解读', {
         spreadType: spreadName,
         cards: drawnCards.map(function(c) { return { name: c.name, position: c.position, reversed: c.reversed }; }),
@@ -733,8 +945,8 @@ function checkAllFlipped() {
   }
 }
 
-// ===== AI 解读核心 =====
-function createAiButton(container, label, onClick) {
+// ===== AI 核心 =====
+function createAiBtn(container, label, onClick) {
   var btn = document.createElement('button');
   btn.className = 'btn';
   btn.innerHTML = '✨ ' + label;
@@ -744,22 +956,21 @@ function createAiButton(container, label, onClick) {
 
 async function callAi(type, title, data) {
   showAiPanel(title, '', true, null, true);
-
   try {
     var response = await fetch(API_BASE + '/api/ai/' + type, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-
     if (!response.ok) throw new Error('HTTP ' + response.status);
     var result = await response.json();
     var text = result.interpretation || result.reply || '抱歉，未能获取解读结果。';
     showAiPanel(title, text, result.isDemo, function() { callAi(type, title, data); }, false);
+    // 保存AI解读到历史
+    saveHistory('AI解读', title, text.substring(0, 50) + '...');
   } catch (e) {
-    // 演示模式
     var demoText = getDemoText(type, data);
     showAiPanel(title, demoText, true, function() { callAi(type, title, data); }, false);
+    saveHistory('AI解读', title, demoText.substring(0, 50) + '...');
   }
 }
 
@@ -790,7 +1001,6 @@ function getDemoText(type, data) {
   return '抱歉，未能生成解读内容。';
 }
 
-// ===== AI 面板 =====
 function showAiPanel(title, content, isDemo, onRetry, isLoading) {
   var existing = document.getElementById('ai-panel');
   if (existing) existing.remove();
@@ -854,6 +1064,11 @@ function renderMd(text) {
     .replace(/---/g, '<hr style="border:none;border-top:1px solid #eee;margin:10px 0;">')
     .replace(/\n/g, '<br>');
 }
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function() {
+  initUser();
+});
 </script>
 
 </body>
