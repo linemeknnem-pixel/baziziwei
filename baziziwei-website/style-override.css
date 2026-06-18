@@ -1,0 +1,181 @@
+/* ============================================================
+   紫微星河 - 简约高级风格覆盖
+   浅色背景 + 删除不必要元素 + 简约排版
+   ============================================================ */
+
+/* ===== 全局背景改为浅色调 ===== */
+body, #root, html {
+  background: #F5F3F0 !important;
+  background-color: #F5F3F0 !important;
+}
+
+/* 所有深色背景区域改为浅色 */
+[style*="background: rgb(0, 0, 0)"],
+[style*="background-color: rgb(0, 0, 0)"],
+[style*="background:#000"],
+[style*="background-color:#000"] {
+  background: #F5F3F0 !important;
+  background-color: #F5F3F0 !important;
+}
+
+/* ===== 文字颜色改为深色（适配浅色背景） ===== */
+body {
+  color: #1a1a1a !important;
+}
+
+/* 主要标题 */
+h1, h2, h3, h4, h5, h6 {
+  color: #1a1a1a !important;
+}
+
+/* 次要文字 */
+p, span, div {
+  color: inherit !important;
+}
+
+/* ===== 删除AI生成的装饰图片 ===== */
+img[src*="AI"],
+img[src*="generated"],
+img[src*="decoration"],
+img[alt*="AI"],
+img[alt*="装饰"],
+[style*="background-image: url"] [alt*="背景"],
+[style*="background-image"] [alt*="decoration"] {
+  display: none !important;
+}
+
+/* 删除多余的装饰性背景图 */
+[style*="background-image: url"][style*="jpg"],
+[style*="background-image: url"][style*="png"] {
+  background-image: none !important;
+}
+
+/* ===== 删除地址、电话、传承文字 ===== */
+/* 这些会通过JS删除，CSS作为备用 */
+.footer-contact-info,
+.contact-details,
+.heritage-text,
+.address-block {
+  display: none !important;
+}
+
+/* ===== 导航栏优化 ===== */
+nav, .nav, .navigation, .nav-glass {
+  background: rgba(245, 243, 240, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+/* 导航链接 */
+nav a, .nav a, .navigation a {
+  color: #1a1a1a !important;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+nav a:hover, nav a.active,
+.nav a:hover, .nav a.active {
+  opacity: 1 !important;
+  color: #3B5BF7 !important;
+}
+
+/* ===== 卡片/面板改为简约风格 ===== */
+[style*="background: rgba(255, 255, 255, 0.03)"],
+[style*="background:rgba(255,255,255,0.03)"] {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ===== 按钮改为简约风格 ===== */
+button, .btn, [role="button"] {
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+/* ===== 输入框优化 ===== */
+input, textarea, select {
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #1a1a1a !important;
+  border-radius: 8px !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #3B5BF7 !important;
+  box-shadow: 0 0 0 3px rgba(59, 91, 247, 0.1) !important;
+  outline: none !important;
+}
+
+/* ===== 分隔线优化 ===== */
+hr, [style*="border-top"] {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ===== 滚动条优化 ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ===== AI解读按钮在浅色背景下的适配 ===== */
+.ai-interpret-btn {
+  background: linear-gradient(135deg, #3B5BF7, #5B73F7) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(59, 91, 247, 0.25) !important;
+}
+
+.ai-interpret-btn:hover {
+  box-shadow: 0 6px 24px rgba(59, 91, 247, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ===== 塔罗卡片在浅色背景下的适配 ===== */
+.tarot-card-front {
+  background: linear-gradient(135deg, #E8E6F0 0%, #F0EEF5 50%, #E8E6F0 100%) !important;
+  border: 1px solid rgba(59, 91, 247, 0.15) !important;
+}
+
+.tarot-card-back {
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ===== 动画优化 ===== */
+@keyframes heroReveal {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 页脚简化 ===== */
+footer {
+  background: transparent !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+footer * {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
