@@ -1,21 +1,22 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>紫微星河 - 八字紫微命理</title>
-    <meta name="description" content="传承千年智慧，探索命运奥秘。八字紫微排盘，解读你的命运密码。" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=SlideFu&display=swap" rel="stylesheet" />
-    <script src="./ai-interpreter.js"></script>
-    <script type="module" crossorigin src="./assets/index-9lBL0tvr.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BmDX60kD.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  <script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>紫微星河 - 八字紫微命理</title>
+  <meta name="description" content="传承千年智慧，探索命运奥秘。八字紫微排盘，解读你的命运密码。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=SlideFu&display=swap" rel="stylesheet" />
+  <script src="./ai-interpreter.js"></script>
+  <script type="module" crossorigin src="./assets/index-9lBL0tvr.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BmDX60kD.css">
+<base target="_blank">
+</head>
+<body>
+  <div id="root"></div>
+<script>
 // ============================================================
 // AI 智能体初始化
 // 自动在八字/运势/塔罗页面添加 AI 解读按钮
@@ -209,47 +210,103 @@ window.addEventListener('load', function() {
 
 });
 </script>
-    <!-- 隐藏地址电话等不需要的内容 -->
+
+<!-- 隐藏地址电话等不需要的内容 -->
 <script>
 (function removeUnwantedContent() {
-  // 页面加载后执行
   window.addEventListener('load', function() {
     setTimeout(function() {
-      // 1. 删除地址
-      var addressEls = document.querySelectorAll('*');
-      addressEls.forEach(function(el) {
-        if (el.children.length === 0 && el.textContent.indexOf('北京市朝阳区传统文化街88号') !== -1) {
-          var parent = el.parentElement;
-          if (parent) parent.style.display = 'none';
+      var allEls = document.querySelectorAll('*');
+      allEls.forEach(function(el) {
+        if (el.children.length === 0) {
+          var text = el.textContent;
+          // 删除地址
+          if (text.indexOf('北京市朝阳区传统文化街88号') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
+          // 删除电话
+          if (text.indexOf('+86 400-888-8888') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
+          // 删除营业时间
+          if (text.indexOf('周一至周日') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
+          // 删除传承文字
+          if (text.indexOf('传承千年命理智慧') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
+          // 删除我们致力于传承...
+          if (text.indexOf('我们致力于传承和发扬') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
+          if (text.indexOf('将八字命理与紫微斗数') !== -1) {
+            var p = el.parentElement;
+            if (p) p.style.display = 'none';
+          }
         }
       });
-      
-      // 2. 删除电话
-      addressEls.forEach(function(el) {
-        if (el.children.length === 0 && el.textContent.indexOf('+86 400-888-8888') !== -1) {
-          var parent = el.parentElement;
-          if (parent) parent.style.display = 'none';
-        }
-      });
-      
-      // 3. 删除营业时间
-      addressEls.forEach(function(el) {
-        if (el.children.length === 0 && el.textContent.indexOf('周一至周日') !== -1) {
-          var parent = el.parentElement;
-          if (parent) parent.style.display = 'none';
-        }
-      });
-      
-      // 4. 删除"传承千年命理智慧..."footer文字
-      addressEls.forEach(function(el) {
-        if (el.children.length === 0 && el.textContent.indexOf('传承千年命理智慧') !== -1) {
-          var parent = el.parentElement;
-          if (parent) parent.style.display = 'none';
-        }
-      });
-    }, 1000); // 等待1秒让页面渲染完成
+    }, 1500);
   });
 })();
 </script>
-  </body>
+
+<!-- 添加塔罗导航链接 -->
+<script>
+(function addTarotNav() {
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      // 查找导航栏
+      var nav = document.querySelector('.nav-links, nav, .nav, .navigation');
+      if (!nav) {
+        // 尝试通过链接查找导航容器
+        var links = document.querySelectorAll('a');
+        var contactLink = null;
+        for (var i = 0; i < links.length; i++) {
+          if (links[i].textContent.indexOf('联系我们') !== -1) {
+            contactLink = links[i];
+            break;
+          }
+        }
+        if (contactLink && contactLink.parentElement) {
+          nav = contactLink.parentElement;
+        }
+      }
+      
+      if (nav) {
+        // 检查是否已有塔罗链接
+        var hasTarot = false;
+        var navLinks = nav.querySelectorAll('a');
+        for (var i = 0; i < navLinks.length; i++) {
+          if (navLinks[i].textContent.indexOf('塔罗') !== -1 ||
+              navLinks[i].href.indexOf('tarot') !== -1) {
+            hasTarot = true;
+            break;
+          }
+        }
+        
+        if (!hasTarot) {
+          var tarotLink = document.createElement('a');
+          tarotLink.href = './tarot.html';
+          tarotLink.textContent = '塔罗占卜';
+          tarotLink.className = 'nav-link';
+          // 复制导航链接的样式
+          var existingLink = nav.querySelector('a');
+          if (existingLink) {
+            tarotLink.className = existingLink.className;
+          }
+          nav.appendChild(tarotLink);
+        }
+      }
+    }, 500);
+  });
+})();
+</script>
+
+</body>
 </html>
